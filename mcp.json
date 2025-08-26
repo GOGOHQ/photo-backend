@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "xhs-local-http": {
+      "name": "xiaohongshu MCP",
+      "baseUrl": "http://127.0.0.1:9001",
+      "isActive": false
+    },
+    "xhs-local-stdio": {
+      "name": "xiaohongshu stdio",
+      "command": "/Users/huangqi/code/Redbook-Search-Comment-MCP2.0/venv/bin/python3",
+      "args": [
+        "/Users/huangqi/code/Redbook-Search-Comment-MCP2.0/xiaohongshu_mcp.py",
+        "--stdio"
+      ],
+      "isActive": true
+    },
+    "maps-local-http": {
+      "name": "maps http",
+      "baseUrl": "http://127.0.0.1:9002",
+      "isActive": false
+    }
+  }
+}
