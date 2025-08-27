@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/huangqi/photo-backend/internal/config"
@@ -24,15 +23,8 @@ func main() {
 
 	// Build clients registry from MCP_CONFIG_PATH or fallback ./mcp.json
 	var registry *mcp.ClientRegistry
-	mcpPath := os.Getenv("MCP_CONFIG_PATH")
-	if mcpPath == "" {
-		if _, err := os.Stat("mcp.json"); err == nil {
-			mcpPath = "mcp.json"
-		}
-	}
-	if mcpPath == "" {
-		log.Fatalf("No MCP config found, set MCP_CONFIG_PATH or ensure mcp.json exists")
-	}
+
+	mcpPath := "/Users/huangqi/code/photo-backend/mcp.json"
 
 	if mcpCfg, err := config.LoadMCPConfig(mcpPath); err != nil {
 		log.Fatalf("Failed to load MCP config: %v", err)

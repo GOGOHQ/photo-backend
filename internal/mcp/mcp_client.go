@@ -14,10 +14,12 @@ type MCPClient struct {
 }
 
 // NewStdioMCPClient 创建基于 stdio 的 MCP 客户端
-func NewStdioMCPClient(command string, args []string) (*MCPClient, error) {
-	// mcp-go 的 NewStdioMCPClient 签名是 (command, env, args...)
-	// 我们传递空的环境变量，然后展开 args
-	client, err := client.NewStdioMCPClient(command, []string{}, args...)
+func NewStdioMCPClient(command string, args []string, env map[string]string) (*MCPClient, error) {
+	var envVars []string
+	for k, v := range env {
+		envVars = append(envVars, fmt.Sprintf("%s=%s", k, v))
+	}
+	client, err := client.NewStdioMCPClient(command, envVars, args...)
 	if err != nil {
 		return nil, err
 	}

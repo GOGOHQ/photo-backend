@@ -28,7 +28,7 @@ func BuildTransportsFromMCPConfig(cfg *appcfg.MCPConfig, httpClient *http.Client
 
 		if srv.Command != "" {
 			// 使用 stdio 传输创建 MCP 客户端
-			client, err := NewStdioMCPClient(srv.Command, srv.Args)
+			client, err := NewStdioMCPClient(srv.Command, srv.Args, srv.Env)
 			if err != nil {
 				return nil, err
 			}

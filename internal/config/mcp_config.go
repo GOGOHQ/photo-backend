@@ -6,11 +6,12 @@ import (
 )
 
 type MCPServer struct {
-	Command  string   `json:"command"`
-	Args     []string `json:"args"`
-	Name     string   `json:"name"`
-	BaseURL  string   `json:"baseUrl"`
-	IsActive bool     `json:"isActive"`
+	Command  string            `json:"command"`
+	Args     []string          `json:"args"`
+	Name     string            `json:"name"`
+	BaseURL  string            `json:"baseUrl"`
+	Env      map[string]string `json:"env"`
+	IsActive bool              `json:"isActive"`
 }
 
 type MCPConfig struct {

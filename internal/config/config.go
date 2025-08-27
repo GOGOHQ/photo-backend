@@ -6,15 +6,15 @@ import (
 )
 
 type Config struct {
-	Port            int
-	GinMode         string
+	Port    int
+	GinMode string
 
-	DBHost          string
-	DBPort          int
-	DBUser          string
-	DBPassword      string
-	DBName          string
-	DBSSLMode       string
+	DBHost     string
+	DBPort     int
+	DBUser     string
+	DBPassword string
+	DBName     string
+	DBSSLMode  string
 
 	MCPXHSEndpoint  string
 	MCPMapsEndpoint string
@@ -38,17 +38,14 @@ func getEnvInt(key string, def int) int {
 
 func Load() Config {
 	return Config{
-		Port:            getEnvInt("PORT", 8080),
-		GinMode:         getEnv("GIN_MODE", "release"),
+		Port:    getEnvInt("PORT", 8080),
+		GinMode: getEnv("GIN_MODE", "release"),
 
-		DBHost:          getEnv("DB_HOST", "localhost"),
-		DBPort:          getEnvInt("DB_PORT", 3306),
-		DBUser:          getEnv("DB_USER", "root"),
-		DBPassword:      getEnv("DB_PASSWORD", "root"),
-		DBName:          getEnv("DB_NAME", "photodb"),
-		DBSSLMode:       getEnv("DB_SSLMODE", ""),
-
-		MCPXHSEndpoint:  getEnv("MCP_XHS_ENDPOINT", "http://localhost:9001"),
-		MCPMapsEndpoint: getEnv("MCP_MAPS_ENDPOINT", "http://localhost:9002"),
+		DBHost:     getEnv("DB_HOST", "localhost"),
+		DBPort:     getEnvInt("DB_PORT", 3306),
+		DBUser:     getEnv("DB_USER", "root"),
+		DBPassword: getEnv("DB_PASSWORD", "root"),
+		DBName:     getEnv("DB_NAME", "photodb"),
+		DBSSLMode:  getEnv("DB_SSLMODE", ""),
 	}
-} 
+}

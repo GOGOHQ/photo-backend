@@ -28,20 +28,15 @@ func main() {
 	}
 
 	var registry *mcp.ClientRegistry
-	mcpPath := os.Getenv("MCP_CONFIG_PATH")
-	if mcpPath == "" {
-		if _, err := os.Stat("mcp.json"); err == nil {
-			mcpPath = "mcp.json"
-		}
-	}
-	if mcpPath != "" {
-		if mcpCfg, err := config.LoadMCPConfig(mcpPath); err != nil {
-			log.Printf("warn: failed to load MCP config: %v", err)
-		} else {
-			registry, err = mcp.BuildTransportsFromMCPConfig(mcpCfg, &http.Client{Timeout: 10 * time.Second})
-			if err != nil {
-				log.Fatalf("failed to build MCP clients: %v", err)
-			}
+
+	mcpPath := "/Users/huangqi/code/photo-backend/mcp.json"
+
+	if mcpCfg, err := config.LoadMCPConfig(mcpPath); err != nil {
+		log.Printf("warn: failed to load MCP config: %v", err)
+	} else {
+		registry, err = mcp.BuildTransportsFromMCPConfig(mcpCfg, &http.Client{Timeout: 30 * time.Second})
+		if err != nil {
+			log.Fatalf("failed to build MCP clients: %v", err)
 		}
 	}
 
@@ -64,13 +59,22 @@ func main() {
 		}
 	}
 
-	r := server.NewRouter(database, xhsClient, mapsClient)
+	var baiduMapsClient mcp.BaiduMapsClient
+	if registry != nil {
+		if client := registry.FindByKeyOrName("baidu-maps"); client != nil {
+			baiduMapsClient = mcp.NewBaiduMapsClient(client)
+		}
+	}
+
+	r := server.NewRouter(database, xhsClient, mapsClient, baiduMapsClient)
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 	if envPort := os.Getenv("PORT"); envPort != "" {
 		addr = ":" + envPort
 	}
+	fmt.Printf("addr: %v\n", addr)
 	if err := r.Run(addr); err != nil {
 		log.Fatalf("server failed: %v", err)
 	}
+
 }

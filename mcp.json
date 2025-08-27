@@ -14,10 +14,17 @@
       ],
       "isActive": true
     },
-    "maps-local-http": {
-      "name": "maps http",
-      "baseUrl": "http://127.0.0.1:9002",
-      "isActive": false
+    "baidu-maps": {
+      "name": "Baidu Maps MCP",
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_server_baidu_maps"
+      ],
+      "env": {
+        "BAIDU_MAPS_API_KEY": "1aiol9mfe8awlvmR9PRMC5bxgg5G9Wgc"
+      },
+      "isActive": true
     }
   }
 }
