@@ -12,7 +12,7 @@
         "/Users/huangqi/code/Redbook-Search-Comment-MCP2.0/xiaohongshu_mcp.py",
         "--stdio"
       ],
-      "isActive": true
+      "isActive": false
     },
     "baidu-maps": {
       "name": "Baidu Maps MCP",

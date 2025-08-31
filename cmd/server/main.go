@@ -39,17 +39,17 @@ func main() {
 		}
 	}
 
-	var xhsClient mcp.XHSClient
-	if registry != nil {
-		if client := registry.FindByKeyOrName("xhs"); client != nil {
-			xhsClient = mcp.NewXHSClient(client)
-		} else if client := registry.FindByKeyOrName("xiaohongshu"); client != nil {
-			xhsClient = mcp.NewXHSClient(client)
-		}
-	}
-	if xhsClient == nil {
-		log.Fatalf("no XHS MCP client configured: set MCP_CONFIG_PATH")
-	}
+	// var xhsClient mcp.XHSClient
+	// if registry != nil {
+	// 	if client := registry.FindByKeyOrName("xhs"); client != nil {
+	// 		xhsClient = mcp.NewXHSClient(client)
+	// 	} else if client := registry.FindByKeyOrName("xiaohongshu"); client != nil {
+	// 		xhsClient = mcp.NewXHSClient(client)
+	// 	}
+	// }
+	// if xhsClient == nil {
+	// 	log.Fatalf("no XHS MCP client configured: set MCP_CONFIG_PATH")
+	// }
 
 	var mapsClient mcp.MapsClient
 	if registry != nil {
@@ -65,7 +65,7 @@ func main() {
 		}
 	}
 
-	r := server.NewRouter(xhsClient, mapsClient, baiduMapsClient)
+	r := server.NewRouter(mapsClient, baiduMapsClient)
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 	if envPort := os.Getenv("PORT"); envPort != "" {
