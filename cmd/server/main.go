@@ -28,7 +28,7 @@ func main() {
 
 	var registry *mcp.ClientRegistry
 
-	mcpPath := "/Users/huangqi/code/photo-backend/mcp.json"
+	mcpPath := "mcp.json"
 
 	if mcpCfg, err := config.LoadMCPConfig(mcpPath); err != nil {
 		log.Printf("warn: failed to load MCP config: %v", err)
