@@ -20,13 +20,13 @@ Photo Backend 提供了两个主要的 MCP 服务：
 **示例：**
 ```bash
 # 搜索关键词
-curl "http://localhost:8080/api/xhs/hot?q=旅行&limit=5"
+curl "http://192.168.1.22:8080/api/xhs/hot?q=旅行&limit=5"
 
 # 获取热门帖子
-curl "http://localhost:8080/api/xhs/hot?limit=10"
+curl "http://192.168.1.22:8080/api/xhs/hot?limit=10"
 
 # 跳过登录
-curl "http://localhost:8080/api/xhs/hot?q=美食&skip_login=true"
+curl "http://192.168.1.22:8080/api/xhs/hot?q=美食&skip_login=true"
 ```
 
 **响应：**
@@ -56,7 +56,7 @@ curl "http://localhost:8080/api/xhs/hot?q=美食&skip_login=true"
 
 **示例：**
 ```bash
-curl "http://localhost:8080/api/xhs/search?q=美食&limit=3"
+curl "http://192.168.1.22:8080/api/xhs/search?q=美食&limit=3"
 ```
 
 **响应：**
@@ -80,17 +80,25 @@ curl "http://localhost:8080/api/xhs/search?q=美食&limit=3"
 
 **示例：**
 ```bash
-curl "http://localhost:8080/api/baidu-maps/geocode?address=北京市朝阳区"
+curl "http://192.168.1.22:8080/api/baidu-maps/geocode?address=北京市朝阳区"
 ```
 
 **响应：**
 ```json
 {
   "data": {
-    "latitude": 39.9219,
-    "longitude": 116.4551,
-    "address": "北京市朝阳区"
-  }
+        "status": 0,
+        "result": {
+            "location": {
+                "lng": 116.44955872950158,
+                "lat": 39.926374523079886
+            },
+            "precise": 0,
+            "confidence": 20,
+            "comprehension": 100,
+            "level": "区县"
+        }
+    }
 }
 ```
 
@@ -104,23 +112,35 @@ curl "http://localhost:8080/api/baidu-maps/geocode?address=北京市朝阳区"
 
 **示例：**
 ```bash
-curl "http://localhost:8080/api/baidu-maps/reverse-geocode?lat=39.9042&lng=116.4074"
+curl "http://192.168.1.22:8080/api/baidu-maps/reverse-geocode?lat=39.9042&lng=116.4074"
 ```
 
 **响应：**
 ```json
 {
-  "data": {
-    "formatted_address": "北京市东城区天安门",
-    "uid": "123456",
-    "address_component": {
-      "country": "中国",
-      "province": "北京市",
-      "city": "北京市",
-      "district": "东城区",
-      "street": "天安门"
+  {
+    "data": {
+        "status": 0,
+        "result": {
+            "location": {
+                "lng": 116.40739999999992,
+                "lat": 39.90420007788774
+            },
+            "formatted_address": "北京市东城区前门街道长巷二条乙5号",
+            "addressComponent": {
+                "country": "中国",
+                "province": "北京市",
+                "city": "北京市",
+                "district": "东城区",
+                "town": "前门街道",
+                "street": "长巷二条",
+                "street_number": "乙5号",
+                "adcode": "110101"
+            },
+            "business": "前门,珠市口,大栅栏"
+        }
     }
-  }
+}
 }
 ```
 
@@ -135,26 +155,17 @@ curl "http://localhost:8080/api/baidu-maps/reverse-geocode?lat=39.9042&lng=116.4
 
 **示例：**
 ```bash
-curl "http://localhost:8080/api/baidu-maps/search-places?q=餐厅&city=北京&limit=5"
+curl "http://192.168.1.22:8080/api/baidu-maps/search-places?q=美食&tag=餐饮服务&region=北京市&location=39.9042,116.4074&radius=2000"
 ```
 
 **响应：**
 ```json
 {
-  "data": [
-    {
-      "name": "全聚德烤鸭店",
-      "address": "北京市东城区前门大街30号",
-      "latitude": 39.8994,
-      "longitude": 116.3974,
-      "uid": "123456",
-      "type": "餐饮服务"
-    }
-  ]
+ "status":0,"message":"ok","result_type":"poi_type","query_type":"general","results":[{"name":"福兴居家·老北京四季涮肉(前门店)","location":{"lat":39.89924060676216,"lng":116.40068947246995},"address":"煤市街博兴胡同南侧（大栅栏社区卫生服务中心斜对面）","province":"北京市","city":"北京市","area":"西城区","town":"大栅栏街道","town_code":110102013,"street_id":"1bf85b25d2f747bda1a9340b","detail":1,"uid":"1bf85b25d2f747bda1a9340b","detail_info":{"classified_poi_tag":"美食;中餐馆;火锅店;老北京火锅","distance":794,"tag":"美食;中餐厅","navi_location":{"lat":39.899279647296034,"lng":116.40097393800443},"type":"cater","detail_url":"http://api.map.baidu.com/place/detail?uid=1bf85b25d2f747bda1a9340b\u0026output=html\u0026source=placeapi_v3","price":"87.0","overall_rating":"4.0","comment_num":"7","shop_hours":"10:00-23:00","label":"老北京火锅","children":[]}}]
 }
 ```
 
-### 4. 路线规划
+<!-- ### 4. 路线规划
 
 **GET** `/api/baidu-maps/directions`
 
@@ -165,7 +176,7 @@ curl "http://localhost:8080/api/baidu-maps/search-places?q=餐厅&city=北京&li
 
 **示例：**
 ```bash
-curl "http://localhost:8080/api/baidu-maps/directions?origin=北京站&destination=天安门&mode=driving"
+curl "http://192.168.1.22:8080/api/baidu-maps/directions?origin=北京站&destination=天安门&mode=driving"
 ```
 
 **响应：**
@@ -177,34 +188,28 @@ curl "http://localhost:8080/api/baidu-maps/directions?origin=北京站&destinati
     "route": "北京站 → 东长安街 → 天安门"
   }
 }
-```
+``` -->
 
 ### 5. 天气查询
 
 **GET** `/api/baidu-maps/weather`
 
 **参数：**
-- `city` (必需): 城市名称
+- `location` (必需): 经纬度坐标：格式是{经度,维度},用逗号分隔
 
 **示例：**
 ```bash
-curl "http://localhost:8080/api/baidu-maps/weather?city=北京"
+curl "http://127.0.0.1:8080/api/baidu-maps/weather?location=116.391275,39.906217"
 ```
 
 **响应：**
 ```json
 {
-  "data": {
-    "city": "北京",
-    "temperature": "15°C",
-    "weather": "晴",
-    "humidity": "45%",
-    "wind": "东北风 3级"
-  }
+  
 }
 ```
 
-### 6. IP定位
+<!-- ### 6. IP定位
 
 **GET** `/api/baidu-maps/ip-location`
 
@@ -213,7 +218,7 @@ curl "http://localhost:8080/api/baidu-maps/weather?city=北京"
 
 **示例：**
 ```bash
-curl "http://localhost:8080/api/baidu-maps/ip-location?ip=8.8.8.8"
+curl "http://192.168.1.22:8080/api/baidu-maps/ip-location?ip=8.8.8.8"
 ```
 
 **响应：**
@@ -238,7 +243,7 @@ curl "http://localhost:8080/api/baidu-maps/ip-location?ip=8.8.8.8"
 
 **示例：**
 ```bash
-curl "http://localhost:8080/api/baidu-maps/traffic?road=长安街&city=北京"
+curl "http://192.168.1.22:8080/api/baidu-maps/traffic?road=长安街&city=北京"
 ```
 
 **响应：**
@@ -250,89 +255,5 @@ curl "http://localhost:8080/api/baidu-maps/traffic?road=长安街&city=北京"
     "speed": "45km/h"
   }
 }
-```
+``` -->
 
-## 配置说明
-
-### MCP 配置文件 (mcp.json)
-
-```json
-{
-  "mcpServers": {
-    "xhs-local-stdio": {
-      "name": "xiaohongshu stdio",
-      "command": "/path/to/python3",
-      "args": [
-        "/path/to/xiaohongshu_mcp.py",
-        "--stdio"
-      ],
-      "isActive": true
-    },
-    "baidu-maps": {
-      "name": "Baidu Maps MCP",
-      "command": "python",
-      "args": [
-        "-m",
-        "mcp_server_baidu_maps",
-        "--api-key",
-        "YOUR_BAIDU_MAPS_API_KEY"
-      ],
-      "isActive": true
-    }
-  }
-}
-```
-
-### 环境变量
-
-- `MCP_CONFIG_PATH`: MCP 配置文件路径（可选，默认为 ./mcp.json）
-
-## 测试工具
-
-### 小红书测试
-```bash
-# 编译测试工具
-go build ./cmd/tools/xhs_debug
-
-# 测试搜索功能
-MCP_CONFIG_PATH=./mcp.json ./xhs_debug -q "旅行" -limit 3
-
-# 跳过登录测试
-MCP_CONFIG_PATH=./mcp.json ./xhs_debug -q "美食" -limit 2 -skip-login
-```
-
-### 百度地图测试
-```bash
-# 编译测试工具
-go build ./cmd/tools/baidu_maps_test
-
-# 测试地理编码
-MCP_CONFIG_PATH=./mcp.json ./baidu_maps_test -test geocode
-
-# 测试搜索地点
-MCP_CONFIG_PATH=./mcp.json ./baidu_maps_test -test search-places
-
-# 测试路线规划
-MCP_CONFIG_PATH=./mcp.json ./baidu_maps_test -test directions
-```
-
-## 错误处理
-
-所有 API 在发生错误时都会返回以下格式：
-
-```json
-{
-  "error": "错误描述信息"
-}
-```
-
-常见错误：
-- `400 Bad Request`: 参数错误
-- `502 Bad Gateway`: MCP 服务错误
-
-## 注意事项
-
-1. **小红书服务**：需要先登录才能正常搜索，API 会自动处理登录流程
-2. **百度地图服务**：需要有效的百度地图 API Key
-3. **超时设置**：所有 API 都有合理的超时设置，避免长时间等待
-4. **并发限制**：建议控制并发请求数量，避免对 MCP 服务造成压力

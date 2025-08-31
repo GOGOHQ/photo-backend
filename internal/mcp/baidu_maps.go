@@ -67,6 +67,7 @@ func (c *baiduMapsClient) ReverseGeocode(ctx context.Context, lat, lng float64) 
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("result: %v\n", result)
 
 	var reverseGeocodeResult ReverseGeocodeResult
 	if err := json.Unmarshal([]byte(result), &reverseGeocodeResult); err != nil {
@@ -76,29 +77,41 @@ func (c *baiduMapsClient) ReverseGeocode(ctx context.Context, lat, lng float64) 
 	return &reverseGeocodeResult, nil
 }
 
-// SearchPlaces 搜索地点，对齐 MCP Server 参数（radius 为整数）
+// SearchPlaces 搜索地点，对齐 MCP Server 参数
 func (c *baiduMapsClient) SearchPlaces(ctx context.Context, query, tag, region, location string, radius int, language, isChina string) ([]Place, error) {
 	args := map[string]any{
 		"query":    query,
 		"tag":      tag,
 		"region":   region,
 		"location": location,
-		"radius":   radius,
 		"language": language,
 		"is_china": isChina,
+	}
+	if radius > 0 {
+		args["radius"] = radius
 	}
 	result, err := c.mcp.CallTool(ctx, "map_search_places", args)
 	fmt.Printf("result: %v\n", result)
 	if err != nil {
 		return nil, err
 	}
-
-	var places []Place
-	if err := json.Unmarshal([]byte(result), &places); err != nil {
+	// 响应是一个包装对象，包含 status/message 等以及 results 列表
+	type searchPlacesResponse struct {
+		Status     int     `json:"status"`
+		Message    string  `json:"message"`
+		ResultType string  `json:"result_type"`
+		QueryType  string  `json:"query_type"`
+		Results    []Place `json:"results"`
+	}
+	var resp searchPlacesResponse
+	if err := json.Unmarshal([]byte(result), &resp); err != nil {
 		return nil, fmt.Errorf("failed to parse places result: %w", err)
 	}
+	if resp.Status != 0 {
+		return nil, fmt.Errorf("search places API error: status=%d message=%s", resp.Status, resp.Message)
+	}
 
-	return places, nil
+	return resp.Results, nil
 }
 
 // GetDirections 路线规划
@@ -133,11 +146,11 @@ func (c *baiduMapsClient) GetWeather(ctx context.Context, location string, distr
 	}
 
 	result, err := c.mcp.CallTool(ctx, "map_weather", args)
+	fmt.Printf("result: %v\n", result)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Printf("result: %v\n", result)
 	var weatherResult WeatherResult
 	if err := json.Unmarshal([]byte(result), &weatherResult); err != nil {
 		raw := result
@@ -216,24 +229,62 @@ type GeocodeResult struct {
 }
 
 type ReverseGeocodeResult struct {
-	FormattedAddress string `json:"formatted_address"`
-	UID              string `json:"uid"`
-	AddressComponent struct {
-		Country  string `json:"country"`
-		Province string `json:"province"`
-		City     string `json:"city"`
-		District string `json:"district"`
-		Street   string `json:"street"`
-	} `json:"address_component"`
+	Status  int    `json:"status"`
+	Message string `json:"message,omitempty"`
+	Result  struct {
+		Location struct {
+			Lng float64 `json:"lng"`
+			Lat float64 `json:"lat"`
+		} `json:"location"`
+		FormattedAddress string `json:"formatted_address"`
+		AddressComponent struct {
+			Country      string `json:"country"`
+			Province     string `json:"province"`
+			City         string `json:"city"`
+			District     string `json:"district"`
+			Town         string `json:"town,omitempty"`
+			Street       string `json:"street"`
+			StreetNumber string `json:"street_number,omitempty"`
+			Adcode       string `json:"adcode,omitempty"`
+		} `json:"addressComponent"`
+		Business string `json:"business,omitempty"`
+	} `json:"result"`
 }
 
 type Place struct {
-	Name      string  `json:"name"`
-	Address   string  `json:"address"`
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
-	UID       string  `json:"uid"`
-	Type      string  `json:"type"`
+	Name     string `json:"name"`
+	Address  string `json:"address"`
+	Province string `json:"province,omitempty"`
+	City     string `json:"city,omitempty"`
+	Area     string `json:"area,omitempty"`
+	Town     string `json:"town,omitempty"`
+	TownCode int    `json:"town_code,omitempty"`
+	StreetID string `json:"street_id,omitempty"`
+	Detail   int    `json:"detail,omitempty"`
+	UID      string `json:"uid"`
+
+	Location struct {
+		Lat float64 `json:"lat"`
+		Lng float64 `json:"lng"`
+	} `json:"location"`
+
+	DetailInfo struct {
+		ClassifiedPOITag string `json:"classified_poi_tag,omitempty"`
+		Distance         int    `json:"distance,omitempty"`
+		Tag              string `json:"tag,omitempty"`
+		NaviLocation     struct {
+			Lat float64 `json:"lat"`
+			Lng float64 `json:"lng"`
+		} `json:"navi_location,omitempty"`
+		Type          string        `json:"type,omitempty"`
+		DetailURL     string        `json:"detail_url,omitempty"`
+		Price         string        `json:"price,omitempty"`
+		OverallRating string        `json:"overall_rating,omitempty"`
+		CommentNum    string        `json:"comment_num,omitempty"`
+		ShopHours     string        `json:"shop_hours,omitempty"`
+		Label         string        `json:"label,omitempty"`
+		Children      []interface{} `json:"children,omitempty"`
+	} `json:"detail_info,omitempty"`
 }
 
 type DirectionsResult struct {

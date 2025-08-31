@@ -4,10 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/huangqi/photo-backend/internal/handlers"
 	"github.com/huangqi/photo-backend/internal/mcp"
-	"gorm.io/gorm"
 )
 
-func NewRouter(db *gorm.DB, xhs mcp.XHSClient, maps mcp.MapsClient, baiduMaps mcp.BaiduMapsClient) *gin.Engine {
+func NewRouter(xhs mcp.XHSClient, maps mcp.MapsClient, baiduMaps mcp.BaiduMapsClient) *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Recovery())
 

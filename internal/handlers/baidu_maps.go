@@ -89,17 +89,17 @@ func (h *BaiduMapsHandler) SearchPlaces(c *gin.Context) {
 	language := c.DefaultQuery("language", "")
 	isChina := c.DefaultQuery("is_china", "true")
 
-	var radius int
+	var radiusInt int
 	if radiusStr != "" {
-		v, err := strconv.Atoi(radiusStr)
-		if err != nil || v < 0 {
+		r, err := strconv.Atoi(radiusStr)
+		if err != nil || r < 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid radius parameter"})
 			return
 		}
-		radius = v
+		radiusInt = r
 	}
 
-	places, err := h.Client.SearchPlaces(c.Request.Context(), query, tag, region, location, radius, language, isChina)
+	places, err := h.Client.SearchPlaces(c.Request.Context(), query, tag, region, location, radiusInt, language, isChina)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
@@ -134,28 +134,12 @@ func (h *BaiduMapsHandler) GetDirections(c *gin.Context) {
 func (h *BaiduMapsHandler) GetWeather(c *gin.Context) {
 	h.ensureInit(c)
 
-	city := c.Query("city")
-	latStr := c.Query("lat")
-	lngStr := c.Query("lng")
+	location := c.Query("location")
 	districtID := c.DefaultQuery("district_id", "")
 	isChina := c.DefaultQuery("is_china", "true")
 
-	location := ""
-	if latStr != "" && lngStr != "" {
-		lat, err1 := strconv.ParseFloat(latStr, 64)
-		lng, err2 := strconv.ParseFloat(lngStr, 64)
-		if err1 != nil || err2 != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid lat or lng"})
-			return
-		}
-		// 使用 "lat,lng" 顺序
-		location = strconv.FormatFloat(lat, 'f', -1, 64) + "," + strconv.FormatFloat(lng, 'f', -1, 64)
-	} else if city != "" {
-		location = city
-	}
-
 	if location == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "city or (lat,lng) parameter is required"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "location parameter is required"})
 		return
 	}
 

@@ -87,7 +87,7 @@ func testSearchPlaces(ctx context.Context, client mcp.BaiduMapsClient) {
 	tag := "美食"
 	region := "上海"
 	location := "31.2304,121.4737"
-	radius := 2000
+	radius := "2000"
 	language := "zh-CN"
 	isChina := "true"
 

@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/huangqi/photo-backend/internal/config"
-	"github.com/huangqi/photo-backend/internal/db"
 	"github.com/huangqi/photo-backend/internal/mcp"
 	"github.com/huangqi/photo-backend/internal/server"
 )
@@ -22,10 +21,10 @@ func main() {
 		gin.SetMode(cfg.GinMode)
 	}
 
-	database, err := db.Connect(cfg)
-	if err != nil {
-		log.Fatalf("failed to connect database: %v", err)
-	}
+	// database, err := db.Connect(cfg)
+	// if err != nil {
+	// 	log.Fatalf("failed to connect database: %v", err)
+	// }
 
 	var registry *mcp.ClientRegistry
 
@@ -66,7 +65,7 @@ func main() {
 		}
 	}
 
-	r := server.NewRouter(database, xhsClient, mapsClient, baiduMapsClient)
+	r := server.NewRouter(xhsClient, mapsClient, baiduMapsClient)
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 	if envPort := os.Getenv("PORT"); envPort != "" {

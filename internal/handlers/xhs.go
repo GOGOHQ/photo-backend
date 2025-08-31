@@ -11,7 +11,6 @@ import (
 type XHSHandler struct {
 	Client      mcp.XHSClient
 	initialized bool
-	loggedIn    bool
 }
 
 func NewXHSHandler(client mcp.XHSClient) *XHSHandler {
@@ -26,10 +25,6 @@ func (h *XHSHandler) ensureInit(c *gin.Context) {
 	// Initialize MCP client
 	_ = h.Client.Initialize(c.Request.Context(), "photo-backend-server", "1.0.0")
 	h.initialized = true
-	if !h.loggedIn {
-		_, _ = h.Client.CallTool(c.Request.Context(), "login", map[string]any{})
-		h.loggedIn = true
-	}
 }
 
 // GetHot retains backward compatibility. When query param q is present, it searches.
@@ -37,7 +32,7 @@ func (h *XHSHandler) ensureInit(c *gin.Context) {
 func (h *XHSHandler) GetHot(c *gin.Context) {
 	h.ensureInit(c)
 
-	skipLogin := c.DefaultQuery("skip_login", "true") == "true"
+	skipLogin := c.DefaultQuery("skip_login", "false") == "true"
 	if !skipLogin {
 		// Best-effort login; ignore error but surface if needed
 		_, _ = h.Client.CallTool(c.Request.Context(), "login", map[string]any{})
