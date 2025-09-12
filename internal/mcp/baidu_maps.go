@@ -124,10 +124,15 @@ func (c *baiduMapsClient) GetDirections(ctx context.Context, origin, destination
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Printf("result: %v\n", result)
 	var directionsResult DirectionsResult
 	if err := json.Unmarshal([]byte(result), &directionsResult); err != nil {
 		return nil, fmt.Errorf("failed to parse directions result: %w", err)
+	}
+
+	// 检查状态码，非 0 视为失败
+	if directionsResult.Status != 0 {
+		return nil, fmt.Errorf("directions API error: status=%d message=%s", directionsResult.Status, directionsResult.Message)
 	}
 
 	return &directionsResult, nil
@@ -288,9 +293,51 @@ type Place struct {
 }
 
 type DirectionsResult struct {
-	Distance string `json:"distance"`
-	Duration string `json:"duration"`
-	Route    string `json:"route"`
+	Status  int    `json:"status"`
+	Message string `json:"message,omitempty"`
+	Result  struct {
+		Origin struct {
+			Lng float64 `json:"lng"`
+			Lat float64 `json:"lat"`
+		} `json:"origin"`
+		Destination struct {
+			Lng float64 `json:"lng"`
+			Lat float64 `json:"lat"`
+		} `json:"destination"`
+		Routes []struct {
+			RouteMd5         string `json:"route_md5"`
+			Distance         int    `json:"distance"`
+			Duration         int    `json:"duration"`
+			TrafficCondition int    `json:"traffic_condition"`
+			Toll             int    `json:"toll"`
+			RestrictionInfo  struct {
+				Status int `json:"status"`
+			} `json:"restriction_info"`
+			Steps []struct {
+				LegIndex         int    `json:"leg_index"`
+				Distance         int    `json:"distance"`
+				Duration         int    `json:"duration"`
+				Direction        int    `json:"direction"`
+				Turn             int    `json:"turn"`
+				RoadType         int    `json:"road_type"`
+				RoadTypes        string `json:"road_types"`
+				Instruction      string `json:"instruction"`
+				Path             string `json:"path"`
+				TrafficCondition []struct {
+					Status int `json:"status"`
+					GeoCnt int `json:"geo_cnt"`
+				} `json:"traffic_condition"`
+				StartLocation struct {
+					Lng string `json:"lng"`
+					Lat string `json:"lat"`
+				} `json:"start_location"`
+				EndLocation struct {
+					Lng string `json:"lng"`
+					Lat string `json:"lat"`
+				} `json:"end_location"`
+			} `json:"steps"`
+		} `json:"routes"`
+	} `json:"result"`
 }
 
 // WeatherResult 精确匹配提供的返回结构

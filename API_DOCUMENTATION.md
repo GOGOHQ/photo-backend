@@ -165,7 +165,7 @@ curl "http://192.168.1.22:8080/api/baidu-maps/search-places?q=美食&tag=餐饮�
 }
 ```
 
-<!-- ### 4. 路线规划
+### 4. 路线规划
 
 **GET** `/api/baidu-maps/directions`
 
@@ -183,12 +183,60 @@ curl "http://192.168.1.22:8080/api/baidu-maps/directions?origin=北京站&destin
 ```json
 {
   "data": {
-    "distance": "3.2公里",
-    "duration": "15分钟",
-    "route": "北京站 → 东长安街 → 天安门"
+    "status": 0,
+    "message": "ok",
+    "result": {
+      "origin": {
+        "lng": 116.4339290221,
+        "lat": 39.909108621585
+      },
+      "destination": {
+        "lng": 116.43405577301,
+        "lat": 39.848844543665
+      },
+      "routes": [
+        {
+          "route_md5": "68aa5f67c9aa8e784ae75be4c89455c8",
+          "distance": 11180,
+          "duration": 1350,
+          "traffic_condition": 1,
+          "toll": 0,
+          "restriction_info": {
+            "status": 0
+          },
+          "steps": [
+            {
+              "leg_index": 0,
+              "distance": 142,
+              "duration": 38,
+              "direction": 3,
+              "turn": 7,
+              "road_type": 6,
+              "road_types": "6",
+              "instruction": "从起点向正东方向出发,行驶140米,左转",
+              "path": "116.4339107865,39.909195851709;116.43557103474,39.909205813903",
+              "traffic_condition": [
+                {
+                  "status": 0,
+                  "geo_cnt": 1
+                }
+              ],
+              "start_location": {
+                "lng": "116.4339107865",
+                "lat": "39.909195851709"
+              },
+              "end_location": {
+                "lng": "116.43557103474",
+                "lat": "39.909205813903"
+              }
+            }
+          ]
+        }
+      ]
+    }
   }
 }
-``` -->
+```
 
 ### 5. 天气查询
 

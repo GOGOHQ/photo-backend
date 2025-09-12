@@ -122,6 +122,7 @@ func (h *BaiduMapsHandler) GetDirections(c *gin.Context) {
 	}
 
 	result, err := h.Client.GetDirections(c.Request.Context(), origin, destination, mode)
+
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 		return
